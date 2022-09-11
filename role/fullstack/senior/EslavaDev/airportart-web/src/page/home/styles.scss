@@ -1,0 +1,22 @@
+.home-container {
+  height: 100vh;
+  text-align: center;
+  @media screen and (min-width: 1280px) {
+    background-color: #eeeeee;
+  }
+  .grid-home-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 200px 90px;
+    @media screen and (min-width: 721px) and (max-width: 1280px) {
+        padding: 200px 90px;
+      }
+    @media screen and (min-width: 481px) and (max-width: 720px) {
+        padding: 120px 60px;
+      }
+    @media screen and (min-width: 240px) and (max-width: 480px) {
+        padding: 50px 20px;
+      }
+  }
+}

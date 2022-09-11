@@ -1,0 +1,119 @@
+version: '3'
+services:
+  database:
+    container_name: database
+    image: mysql:latest
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    networks:
+      - azulo
+    environment:
+      MYSQL_USER: 'azulo'
+      MYSQL_DATABASE: 'azulo'
+      MYSQL_PASSWORD: 'azulo'
+      MYSQL_ROOT_PASSWORD: 'azulo'
+
+  cache:
+    container_name: cache
+    image: redis:6
+    networks:
+      - azulo
+
+  flyway:
+    container_name: flyway
+    image: flyway/flyway:6.3.1
+    networks:
+      - azulo
+    environment:
+      FLYWAY_PASSWORD: 'azulo'
+      FLYWAY_USER: 'azulo'
+    command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    # command: -url=jdbc:postgresql://database:5432/azulo -connectRetries=60 migrate -X
+    volumes:
+      - ${PWD}/sql:/flyway/sql
+      - ${PWD}/docker-flyway.config:/flyway/conf/flyway.config
+    depends_on:
+      - database
+      - cache
+
+  directus:
+    container_name: directus
+    restart: always
+    image: directus/directus:latest
+    ports:
+      - 8055:8055
+    expose:
+      - 8055
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./database:/directus/database
+      - ./extensions:/directus/extensions
+    networks:
+      - azulo
+    depends_on:
+      - database
+      - flyway
+      - cache
+    environment:
+      KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
+      SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
+
+      DB_CLIENT: 'mysql'
+      DB_HOST: 'database'
+      DB_PORT: '3306'
+      DB_DATABASE: 'azulo'
+      DB_USER: 'azulo'
+      DB_PASSWORD: 'azulo'
+
+      CACHE_ENABLED: 'true'
+      CACHE_STORE: 'redis'
+      CACHE_REDIS: 'redis://cache:6379'
+
+      ADMIN_EMAIL: 'admin@test.com'
+      ADMIN_PASSWORD: 'admin'
+
+  airportart-api:
+    container_name: airportart-api
+    build: ./airportart-api/.
+    ports:
+      - 3002:3002
+    depends_on:
+      - database
+      - cache
+    networks:
+      - azulo
+    expose:
+      - 3002
+    environment:
+      PORT: 3002
+      DB_CLIENT: 'mysql'
+      DB_HOST: 'database'
+      DB_PORT: '3306'
+      DB_DATABASE: 'azulo'
+      DB_USER: 'azulo'
+      DB_PASSWORD: 'azulo'
+      ENTITIES_DIR: ./dist/models/**/*.js
+      CLI_ENTITIES_DIR: ./**/*
+
+  airportart-web:
+    container_name: airportart-web
+    build: ./airportart-web/.
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+      - cache
+    networks:
+      - azulo
+    expose:
+      - 3000
+    environment:
+      PORT: 3000
+      REACT_APP_URL: http://directus:8055
+      
+networks:
+  azulo:

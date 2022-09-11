@@ -1,0 +1,10 @@
+.card-container{
+    border: 2px solid black;
+    min-width: 160px !important;
+    margin: 5px !important;
+    padding: 0px 2px;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
+    filter:drop-shadow(0 8px 8px rgba(0,0,0,0.2));
+}
