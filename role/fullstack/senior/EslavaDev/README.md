@@ -13,7 +13,7 @@
 
 ## ENDPOINTS
 
-1. GET all airports (http://0.0.0.0:3001/airport)
-2. GET by id airports (http://0.0.0.0:3001/airport/1)
-3. PUT update operator (http://0.0.0.0:3001/airport/operator/1) body ` { "operator": 10 }`
-4. PUT update priority (http://0.0.0.0:3001/airport/priority/1) body ` { "priority": 10 }`
+1. GET all airports (http://0.0.0.0:3002/airport)
+2. GET by id airports (http://0.0.0.0:3002/airport/1)
+3. PUT update operator (http://0.0.0.0:3002/airport/operator/1) body ` { "operator": 10 }`
+4. PUT update priority (http://0.0.0.0:3002/airport/priority/1) body ` { "priority": 10 }`
